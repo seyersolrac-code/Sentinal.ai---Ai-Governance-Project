@@ -704,12 +704,13 @@ footer{
     <div class="section-eyebrow" style="justify-content:center;display:flex;margin-bottom:1rem">Early access</div>
     <h2>Know every AI tool<br>your team uses — <em class="grad-text">today.</em></h2>
     <p class="cta-sub">First 50 teams get 3 months of Pro free. No credit card required. Setup in 15 minutes.</p>
-    <form class="email-row" id="waitlistForm" onsubmit="handleSubmit(event)">
+    <form class="email-row" action="https://formspree.io/f/xzdykzzb" method="POST">
       <input type="email" name="email" placeholder="you@company.com" required>
       <input type="hidden" name="_subject" value="New SentinelAI waitlist signup">
-      <button type="submit" id="submitBtn" class="btn-plan btn-plan-primary" style="width:auto;margin:0;padding:10px 20px;white-space:nowrap">Claim early access →</button>
+      <input type="hidden" name="_next" value="https://sentinal-ai-ai-governance-project.vercel.app/?thanks=1">
+      <button type="submit" class="btn-plan btn-plan-primary" style="width:auto;margin:0;padding:10px 20px;white-space:nowrap">Claim early access →</button>
     </form>
-    <div class="cta-note" id="ctaNote">Joining the waitlist · <b>37 of 50 spots</b> remaining</div>
+    <div class="cta-note">Joining the waitlist · <b>37 of 50 spots</b> remaining</div>
   </div>
 </div>
 
@@ -734,7 +735,7 @@ async function handleSubmit(e){
   const btn=document.getElementById('submitBtn');
   const inp=form.querySelector('input[type=email]');
   const note=document.getElementById('ctaNote');
-  const FORM_ID='xzdykzzb'; // ← Paste your Formspree ID here
+  const FORM_ID='YOUR_FORM_ID'; // ← Paste your Formspree ID here
 
   btn.textContent='Sending...';
   btn.style.opacity='0.7';
