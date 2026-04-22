@@ -548,15 +548,21 @@ footer{
   </div>
 </div>
 
-<!-- LOGO STRIP -->
+<!-- WHO IT'S FOR -->
 <div class="strip">
-  <div class="strip-label">Built for IT teams at companies of every size</div>
+  <div class="strip-label">Built for the people managing AI adoption at 50–500 person companies</div>
   <div class="strip-logos">
-    <span class="strip-logo">Acme Corp</span>
-    <span class="strip-logo">Brandix</span>
-    <span class="strip-logo">Northstar</span>
-    <span class="strip-logo">Velo Systems</span>
-    <span class="strip-logo">Halcyon</span>
+    <span class="strip-logo">IT Managers</span>
+    <span style="color:rgba(255,255,255,.12);font-size:20px">·</span>
+    <span class="strip-logo">CISOs</span>
+    <span style="color:rgba(255,255,255,.12);font-size:20px">·</span>
+    <span class="strip-logo">IT Directors</span>
+    <span style="color:rgba(255,255,255,.12);font-size:20px">·</span>
+    <span class="strip-logo">Security Engineers</span>
+    <span style="color:rgba(255,255,255,.12);font-size:20px">·</span>
+    <span class="strip-logo">SysAdmins</span>
+    <span style="color:rgba(255,255,255,.12);font-size:20px">·</span>
+    <span class="strip-logo">Compliance Officers</span>
   </div>
 </div>
 
@@ -698,11 +704,12 @@ footer{
     <div class="section-eyebrow" style="justify-content:center;display:flex;margin-bottom:1rem">Early access</div>
     <h2>Know every AI tool<br>your team uses — <em class="grad-text">today.</em></h2>
     <p class="cta-sub">First 50 teams get 3 months of Pro free. No credit card required. Setup in 15 minutes.</p>
-    <form class="email-row" onsubmit="handleSubmit(event)">
-      <input type="email" placeholder="you@company.com" id="ctaEmail" required>
-      <button type="submit" class="btn-plan btn-plan-primary" style="width:auto;margin:0;padding:10px 20px;white-space:nowrap">Claim early access →</button>
+    <form class="email-row" id="waitlistForm" onsubmit="handleSubmit(event)">
+      <input type="email" name="email" placeholder="you@company.com" required>
+      <input type="hidden" name="_subject" value="New SentinelAI waitlist signup">
+      <button type="submit" id="submitBtn" class="btn-plan btn-plan-primary" style="width:auto;margin:0;padding:10px 20px;white-space:nowrap">Claim early access →</button>
     </form>
-    <div class="cta-note">Joining the waitlist · <b>37 of 50 spots</b> remaining</div>
+    <div class="cta-note" id="ctaNote">Joining the waitlist · <b>37 of 50 spots</b> remaining</div>
   </div>
 </div>
 
@@ -721,13 +728,40 @@ document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
 const co = new IntersectionObserver(e=>{e.forEach(x=>{if(!x.isIntersecting)return;const el=x.target,tgt=+el.dataset.target,start=performance.now();(function tick(now){const p=Math.min((now-start)/1400,1),ease=1-Math.pow(1-p,3);el.textContent=Math.floor(ease*tgt);if(p<1)requestAnimationFrame(tick);else el.textContent=tgt})(start);co.unobserve(el)})},{threshold:.5});
 document.querySelectorAll('.counter').forEach(el=>co.observe(el));
 
-function handleSubmit(e){
+async function handleSubmit(e){
   e.preventDefault();
-  const btn=e.target.querySelector('button'),inp=e.target.querySelector('input');
-  btn.textContent="You're in! 🎉";
-  btn.style.background='linear-gradient(135deg,#059669,#34D399)';
-  inp.value='';inp.placeholder="We'll be in touch soon!";
-  setTimeout(()=>{btn.textContent='Claim early access →';btn.style.background='';inp.placeholder='you@company.com'},5000);
+  const form=e.target;
+  const btn=document.getElementById('submitBtn');
+  const inp=form.querySelector('input[type=email]');
+  const note=document.getElementById('ctaNote');
+  const FORM_ID='YOUR_FORM_ID'; // ← Paste your Formspree ID here
+
+  btn.textContent='Sending...';
+  btn.style.opacity='0.7';
+  btn.disabled=true;
+
+  try {
+    const res=await fetch('https://formspree.io/f/'+FORM_ID,{
+      method:'POST',
+      headers:{'Accept':'application/json','Content-Type':'application/json'},
+      body:JSON.stringify({email:inp.value})
+    });
+    if(res.ok){
+      btn.textContent="You are in! Congrats!";
+      btn.style.opacity='1';
+      btn.style.background='linear-gradient(135deg,#059669,#34D399)';
+      inp.value='';
+      inp.placeholder="We will be in touch soon!";
+      note.innerHTML="<b style='color:var(--green)'>&#10003; You\'re on the list!</b> We\'ll reach out within 24 hours.";
+    } else {
+      throw new Error('Submission failed');
+    }
+  } catch(err){
+    btn.textContent='Try again';
+    btn.style.opacity='1';
+    btn.disabled=false;
+    note.innerHTML='<span style="color:var(--red)">Something went wrong — email us directly: <a href="mailto:hello@sentinelai.io" style="color:var(--cyan)">hello@sentinelai.io</a></span>';
+  }
 }
 
 document.querySelectorAll('.w-tab').forEach((t,i)=>{t.addEventListener('click',()=>{document.querySelectorAll('.w-tab').forEach(x=>x.classList.remove('active'));t.classList.add('active')})});
